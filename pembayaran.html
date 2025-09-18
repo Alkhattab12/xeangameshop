@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Pembayaran</title>
+  <style>
+    /* ... (CSS umum sama dengan index.html) ... */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-image: url('https://files.catbox.moe/0iio95.png');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      position: relative;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    }
+    header h1 {
+      margin-bottom: 5px;
+      font-size: 2.8em;
+      font-weight: 700;
+    }
+    header p {
+      font-size: 1.1em;
+      font-weight: 300;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .menu-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    .menu-buttons a, .menu-buttons button {
+      text-decoration: none;
+      width: 150px;
+      padding: 12px;
+      font-size: 1em;
+      background: #e0e0e0;
+      color: #333;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-align: center;
+    }
+    .menu-buttons a.active, .menu-buttons button.active {
+      background: #4f46e5;
+      color: white;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.4);
+    }
+    .menu-buttons a:hover, .menu-buttons button:hover {
+      transform: translateY(-2px);
+    }
+    .header-image {
+        display: block;
+        margin: 0 auto 20px;
+        max-width: 100px; /* Sesuaikan ukuran ikon */
+        height: auto;
+    }
+    .invoice-details {
+      text-align: left;
+      margin-top: 20px;
+    }
+    .invoice-details h2, .invoice-details h3, .invoice-details h4 {
+      color: #333;
+    }
+    .info-block, .price-details, .payment-method, .invoice-info {
+      background-color: #f8f8f8;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 1px solid #eee;
+    }
+    .price-details hr {
+      border: 0;
+      height: 1px;
+      background: #ccc;
+      margin: 10px 0;
+    }
+    #total-payment {
+      color: #ff6f00;
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+    .payment-link-button {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background-color: #4f46e5;
+      color: white;
+      text-align: center;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-top: 20px;
+    }
+    .status-pending {
+      color: #ff6f00;
+    }
+    .payment-qr {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .payment-qr img {
+      width: 250px;
+      height: 250px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+    .account-info {
+        margin-top: 15px;
+        background-color: #f0f8ff;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #e6eaff;
+    }
+    .account-info p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>XeanGAGShop</h1>
+    <p>Tempat Semua Kebutuhan Grow A Garden Mu</p>
+  </header>
+
+  <div class="container">
+    <div class="menu-buttons">
+        <a href="index.html" class="active">Transaksi</a>
+        <a href="keterangan.html">Keterangan</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="invoice-details">
+      <h2 style="text-align: center;">Menunggu Pembayaran</h2>
+      <p style="text-align: center; color: #666;">Silahkan untuk melakukan pembayaran dengan metode yang Kamu pilih.</p>
+      
+      <div class="info-block">
+        <h3>Progress Transaksi</h3>
+        <p>Nomor Invoice: <span id="invoice-number"></span></p>
+        <p>Status Transaksi: <span class="status-pending">Menunggu</span></p>
+      </div>
+
+      <div class="info-block">
+        <h4>Informasi Pesanan</h4>
+        <p><strong>Username:</strong> <span id="invoice-username"></span></p>
+        <p><strong>Item:</strong> <span id="invoice-item"></span></p>
+      </div>
+      
+      <div class="price-details">
+        <h4>Rincian Pembayaran</h4>
+        <p><strong>Harga Item:</strong> Rp <span id="harga-item"></span></p>
+        <p><strong>Biaya Layanan:</strong> Rp <span id="biaya-fee"></span></p>
+        <hr>
+        <h3>Total Pembayaran <span id="total-payment"></span></h3>
+      </div>
+      
+      <div id="payment-details-specific">
+        </div>
+      
+      <a href="#" id="payment-link" class="payment-link-button">Klik di sini untuk melakukan pembayaran via WhatsApp</a>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Mengambil data dari URL
+      const params = new URLSearchParams(window.location.search);
+      const nama = params.get('nama');
+      const telp = params.get('telp');
+      const username = params.get('username');
+      const item = params.get('item');
+      const harga = parseInt(params.get('harga'));
+      const paymentMethod = params.get('payment');
+
+      // Biaya admin/fee untuk setiap metode pembayaran
+      const paymentFees = {
+          "DANA": 1000,
+          "GoPay": 1500,
+          "OVO": 1700,
+          "ShopeePay": 2000,
+          "QRIS": 900
+      };
+
+      const fee = paymentFees[paymentMethod] || 0;
+      const total = harga + fee;
+      const invoiceNumber = `XGS-${Math.floor(Math.random() * 90000000) + 10000000}`; // Contoh nomor invoice
+
+      // Menampilkan data di halaman
+      document.getElementById('invoice-number').textContent = invoiceNumber;
+      document.getElementById('invoice-username').textContent = username;
+      document.getElementById('invoice-item').textContent = item;
+      document.getElementById('harga-item').textContent = harga.toLocaleString('id-ID');
+      document.getElementById('biaya-fee').textContent = fee.toLocaleString('id-ID');
+      document.getElementById('total-payment').textContent = `Rp ${total.toLocaleString('id-ID')}`;
+
+      // Memuat konten detail pembayaran spesifik
+      const paymentDetailsContainer = document.getElementById('payment-details-specific');
+      let detailsHtml = '';
+
+      switch (paymentMethod) {
+          case 'DANA':
+              detailsHtml = `
+                  <div class="payment-method">
+                      <h4>Metode Pembayaran</h4>
+                      <p><strong>DANA</strong></p>
+                      <div class="account-info">
+                        <p>Nomor DANA: <strong>0812-1211-2379</strong></p>
+                        <p>Atas Nama: <strong>KURNIAWAN</strong></p>
+                      </div>
+                  </div>
+              `;
+              break;
+          case 'GoPay':
+              detailsHtml = `
+                  <div class="payment-method">
+                      <h4>Metode Pembayaran</h4>
+                      <p><strong>GoPay</strong></p>
+                      <div class="account-info">
+                        <p>Nomor GoPay: <strong>0812-1211-2379</strong></p>
+                        <p>Atas Nama: <strong>KURNIAWAN</strong></p>
+                      </div>
+                  </div>
+              `;
+              break;
+          case 'OVO':
+              detailsHtml = `
+                  <div class="payment-method">
+                      <h4>Metode Pembayaran</h4>
+                      <p><strong>OVO</strong></p>
+                      <div class="account-info">
+                        <p>Nomor OVO: <strong>0812-1211-2379</strong></p>
+                        <p>Atas Nama: <strong>KURNIAWAN</strong></p>
+                      </div>
+                  </div>
+              `;
+              break;
+          case 'ShopeePay':
+              detailsHtml = `
+                  <div class="payment-method">
+                      <h4>Metode Pembayaran</h4>
+                      <p><strong>ShopeePay</strong></p>
+                      <div class="account-info">
+                        <p>Nomor ShopeePay: <strong>0812-1211-2379</strong></p>
+                        <p>Atas Nama: <strong>KURNIAWAN</strong></p>
+                      </div>
+                  </div>
+              `;
+              break;
+          case 'QRIS':
+              detailsHtml = `
+                  <div class="payment-method">
+                      <h4>Metode Pembayaran</h4>
+                      <p><strong>QRIS</strong></p>
+                      <div class="payment-qr">
+                          <img src="https://files.catbox.moe/67x0w4.png" alt="QRIS Code">
+                      </div>
+                  </div>
+              `;
+              break;
+      }
+      paymentDetailsContainer.innerHTML = detailsHtml;
+
+      // Membuat tautan WhatsApp
+      const pesan = `📦 ORDER XEANGAMESHOP 📦\n\nNomor Invoice: ${invoiceNumber}\nNama: ${nama}\nNomor: ${telp}\nUsername Game: ${username}\nItem: ${item}\nPembayaran: ${paymentMethod}\nTotal: Rp ${total.toLocaleString('id-ID')}`;
+      const nomorAdmin = "62895321622419";
+      const waUrl = `https://wa.me/${nomorAdmin}?text=${encodeURIComponent(pesan)}`;
+      document.getElementById("payment-link").href = waUrl;
+    });
+  </script>
+</body>
+</html>
