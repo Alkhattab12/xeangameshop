@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XeanGameShop</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f4f6;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #4f46e5;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin: 12px 0 6px;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #4f46e5;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #3730a3;
+    }
+    .hidden {
+      display: none;
+    }
+    .success {
+      text-align: center;
+      padding: 20px;
+    }
+    .success h2 {
+      color: #16a34a;
+    }
+    .success p {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>XeanGameShop</h1>
+    <p>Top Up Game Favoritmu dengan Mudah & Cepat</p>
+  </header>
+
+  <div class="container" id="form-section">
+    <form id="orderForm">
+      <label for="game">Pilih Game</label>
+      <select id="game" name="game" required>
+        <option value="">-- Pilih Game --</option>
+        <option value="Mobile Legends">Mobile Legends</option>
+        <option value="Free Fire">Free Fire</option>
+        <option value="PUBG Mobile">PUBG Mobile</option>
+        <option value="Grow a Garden">Grow a Garden</option>
+      </select>
+
+      <label for="nama">Nama Lengkap</label>
+      <input type="text" id="nama" name="nama" placeholder="Masukkan nama Anda" required>
+
+      <label for="telp">Nomor WhatsApp / Telp</label>
+      <input type="tel" id="telp" name="telp" placeholder="08xxxxxxxxxx" required>
+
+      <label for="username">Username Game</label>
+      <input type="text" id="username" name="username" placeholder="Masukkan username game" required>
+
+      <label for="item">Pilih Item</label>
+      <select id="item" name="item" required>
+        <option value="">-- Pilih Item --</option>
+        <option value="50 Diamonds">50 Diamonds</option>
+        <option value="100 Diamonds">100 Diamonds</option>
+        <option value="500 Diamonds">500 Diamonds</option>
+        <option value="Pet / Item Khusus">Pet / Item Khusus</option>
+      </select>
+
+      <label for="payment">Metode Pembayaran</label>
+      <select id="payment" name="payment" required>
+        <option value="">-- Pilih Pembayaran --</option>
+        <option value="DANA">DANA</option>
+        <option value="GoPay">GoPay</option>
+        <option value="OVO">OVO</option>
+        <option value="ShopeePay">ShopeePay</option>
+        <option value="QRIS">QRIS</option>
+      </select>
+
+      <button type="submit">Pesan Sekarang</button>
+    </form>
+  </div>
+
+  <div class="container hidden" id="success-section">
+    <div class="success">
+      <h2>✅ Pesanan Berhasil Dibuat!</h2>
+      <p>Silakan lakukan pembayaran sesuai metode yang dipilih.<br>
+      Setelah itu, klik tombol di bawah untuk mengirim bukti pembayaran ke Customer Service.</p>
+      <button id="sendProofBtn">Kirim Bukti Pembayaran</button>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("orderForm");
+    const formSection = document.getElementById("form-section");
+    const successSection = document.getElementById("success-section");
+    const sendProofBtn = document.getElementById("sendProofBtn");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      // Ambil data
+      const game = document.getElementById("game").value;
+      const nama = document.getElementById("nama").value;
+      const telp = document.getElementById("telp").value;
+      const username = document.getElementById("username").value;
+      const item = document.getElementById("item").value;
+      const payment = document.getElementById("payment").value;
+
+      // Simpan data pesanan ke localStorage (sementara)
+      localStorage.setItem("orderData", JSON.stringify({ game, nama, telp, username, item, payment }));
+
+      // Tampilkan success page
+      formSection.classList.add("hidden");
+      successSection.classList.remove("hidden");
+    });
+
+    sendProofBtn.addEventListener("click", function() {
+      const orderData = JSON.parse(localStorage.getItem("orderData"));
+
+      if (!orderData) return;
+
+      // Nomor WhatsApp CS (ubah ke nomor kamu)
+      const csNumber = "6281234567890";
+
+      // Pesan otomatis
+      const message = `Halo Admin, saya sudah melakukan pembayaran.\n\nBerikut detail pesanan saya:\n\n🕹 Game: ${orderData.game}\n👤 Nama: ${orderData.nama}\n📱 No. WA: ${orderData.telp}\n🎮 Username: ${orderData.username}\n🎁 Item: ${orderData.item}\n💳 Pembayaran: ${orderData.payment}\n\nSaya ingin mengirim bukti pembayaran.`;
+
+      // Redirect ke WhatsApp
+      window.location.href = `https://wa.me/${csNumber}?text=${encodeURIComponent(message)}`;
+    });
+  </script>
+</body>
+</html>
